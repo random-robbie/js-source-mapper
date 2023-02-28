@@ -6,5 +6,5 @@ Install
 ---
 
 ```
-go install github.com/random-robbie/source-mapper@latest
+go install github.com/random-robbie/js-source-mapper@latest
 ```
