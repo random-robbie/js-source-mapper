@@ -5,9 +5,11 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -51,7 +53,12 @@ func main() {
 }
 
 func grabber(url2 string) {
-	queryString := "?cache=12312"
+	var rnd strings.Builder
+	for i := 0; i < 8; i++ {
+		rnd.WriteString(strconv.Itoa(rand.Intn(10)))
+	}
+	normalString := rnd.String()
+	queryString := "?cache=" + normalString + ""
 	fullUrl := strings.Join([]string{url2, queryString}, "")
 	u, err := url.Parse(fullUrl)
 	if err != nil {
@@ -114,7 +121,7 @@ func grabber(url2 string) {
 		}
 
 		bodyStr2 := string(bodyBytes2)
-
+		fmt.Println("body2:", bodyStr2)
 		if strings.Contains(bodyStr2, "mappings") {
 			f, err := os.OpenFile("mapping.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
 			if err != nil {
@@ -133,6 +140,7 @@ func grabber(url2 string) {
 		}
 	} else {
 		fmt.Println("No SourceMap Found - " + url2 + "")
+
 	}
 
 }
