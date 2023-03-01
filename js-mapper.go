@@ -107,7 +107,7 @@ func grabber(url2 string) {
 			return
 		}
 		contentType := resp.Header.Get("Content-Type")
-		if resp.StatusCode == http.StatusOK && (contentType == "application/javascript" || contentType == "application/octet-stream") {
+		if resp.StatusCode == http.StatusOK && (contentType == "application/javascript" || contentType == "application/octet-stream" || contentType == "application/json") {
 			f, err := os.OpenFile("mapping.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 			if err != nil {
 				fmt.Println("Error:", err)
