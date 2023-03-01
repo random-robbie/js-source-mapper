@@ -51,8 +51,9 @@ func main() {
 }
 
 func grabber(url2 string) {
-
-	u, err := url.Parse(url2)
+	queryString := "?cache=12312"
+	fullUrl := strings.Join([]string{url2, queryString}, "")
+	u, err := url.Parse(fullUrl)
 	if err != nil {
 		fmt.Println(err)
 
@@ -96,19 +97,26 @@ func grabber(url2 string) {
 		u.Fragment = ""
 		newURL := u.String() + ".map"
 		fmt.Println("Mapping URL - " + newURL + "")
-		req2, err := http.NewRequest("HEAD", newURL, nil)
+		req2, err := http.NewRequest("GET", newURL, nil)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}
-		resp, err := client.Do(req2)
+		resp2, err := client.Do(req2)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		contentType := resp.Header.Get("Content-Type")
-		if resp.StatusCode == http.StatusOK && (contentType == "application/javascript" || contentType == "application/octet-stream" || contentType == "application/json") {
-			f, err := os.OpenFile("mapping.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		bodyBytes2, err := ioutil.ReadAll(resp2.Body)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		bodyStr2 := string(bodyBytes2)
+
+		if strings.Contains(bodyStr2, "mappings") {
+			f, err := os.OpenFile("mapping.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
