@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"crypto/tls"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -14,17 +15,24 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide a URL or file as an argument")
+
+	input := flag.String("input", "", "Name of the input file or URL(required)")
+	output := flag.String("output", "", "Name of the output file (required)")
+	flag.Parse()
+	if *output == "" {
+		fmt.Println("Error: output flag is required")
 		return
 	}
 
-	input := os.Args[1]
+	if *input == "" {
+		fmt.Println("Error: input flag is required")
+		return
+	}
 
 	// Check if the argument is a file
-	if _, err := os.Stat(input); err == nil {
+	if _, err := os.Stat(*input); err == nil {
 		// Open the file
-		f, err := os.Open(input)
+		f, err := os.Open(*input)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -38,21 +46,21 @@ func main() {
 			url := scanner.Text()
 
 			// Send the URL to the grabber function
-			grabber(url)
+			grabber(url, *output)
 		}
 		if err := scanner.Err(); err != nil {
 			fmt.Println(err)
 		}
 	} else {
 		// Set the URL variable as the input argument
-		url := input
+		url := *input
 
 		// Send the URL to the grabber function
-		grabber(url)
+		grabber(url, *output)
 	}
 }
 
-func grabber(url2 string) {
+func grabber(url2, output string) {
 	var rnd strings.Builder
 	for i := 0; i < 8; i++ {
 		rnd.WriteString(strconv.Itoa(rand.Intn(10)))
@@ -123,7 +131,7 @@ func grabber(url2 string) {
 		bodyStr2 := string(bodyBytes2)
 		fmt.Println("body2:", bodyStr2)
 		if strings.Contains(bodyStr2, "mappings") {
-			f, err := os.OpenFile("mapping.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
+			f, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
@@ -136,7 +144,7 @@ func grabber(url2 string) {
 				return
 			}
 
-			fmt.Println("Mapping URL written to mapping.txt")
+			fmt.Println("Mapping URL written to " + output + "")
 		}
 	} else {
 		fmt.Println("No SourceMap Found - " + url2 + "")
