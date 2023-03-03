@@ -46,7 +46,10 @@ func main() {
 			url := scanner.Text()
 
 			// Send the URL to the grabber function
-			grabber(url, *output)
+			if len(url) > 0 {
+				grabber(url, *output)
+			}
+
 		}
 		if err := scanner.Err(); err != nil {
 			fmt.Println(err)
@@ -129,7 +132,7 @@ func grabber(url2, output string) {
 		}
 
 		bodyStr2 := string(bodyBytes2)
-		fmt.Println("body2:", bodyStr2)
+
 		if strings.Contains(bodyStr2, "mappings") {
 			f, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
 			if err != nil {
