@@ -79,6 +79,7 @@ func grabber(url2, output string) {
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		Timeout: 15 * time.Second,
 	}
 	client := &http.Client{Transport: tr}
 
